@@ -13,9 +13,8 @@ def real_time_speech_recognition():
                 audio = recognizer.listen(source)
                 text = recognizer.recognize_google(audio, language="ru-RU")
                 print("Распознано:", text)
-                for word in text.split(" "):
-                    if find.is_obsence(word.lower()):
-                        print("Маты найдены!")
+                if find.is_obsence(text):
+                    print("Маты найдены")
             except sr.UnknownValueError:
                 print("Не удалось распознать речь")
             except sr.RequestError as e:
