@@ -1,5 +1,5 @@
 import speech_recognition as sr
-from modules.find import obscene_language
+import modules.find as find
 
 def real_time_speech_recognition():
     recognizer = sr.Recognizer()
@@ -13,8 +13,9 @@ def real_time_speech_recognition():
                 audio = recognizer.listen(source)
                 text = recognizer.recognize_google(audio, language="ru-RU")
                 print("Распознано:", text)
-                if obscene_language.is_obsence(text):
-                    print("Маты найдены!")
+                for word in text.split(" "):
+                    if find.is_obsence(word.lower()):
+                        print("Маты найдены!")
             except sr.UnknownValueError:
                 print("Не удалось распознать речь")
             except sr.RequestError as e:
