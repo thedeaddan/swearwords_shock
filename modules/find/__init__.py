@@ -1,1 +1,1 @@
-from .obscene_language import *
+from modules.find.obscene_language import *

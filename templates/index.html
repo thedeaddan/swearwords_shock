@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        #obsceneMessage {
+            display: none;
+            color: red;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+
+<button id="startButton">Начать прослушивание</button>
+<button id="stopButton">Остановить прослушивание</button>
+<div id="obsceneMessage"></div>
+
+<script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    document.getElementById('startButton').onclick = function() {
+        socket.emit('start-listening');
+    };
+
+    document.getElementById('stopButton').onclick = function() {
+        socket.emit('stop-listening');
+    };
+
+    socket.on('obscene-detected', function() {
+        var obsceneMessage = document.getElementById('obsceneMessage');
+        obsceneMessage.innerHTML = 'Маты найдены!';
+        obsceneMessage.style.display = 'block';
+        setTimeout(function() {
+            obsceneMessage.style.transition = 'all 1s ease';
+            obsceneMessage.style.color = 'initial';
+        }, 100);
+        setTimeout(function() {
+            obsceneMessage.style.display = 'none';
+            obsceneMessage.style.transition = 'none';
+            obsceneMessage.style.color = 'red';
+        }, 2000);
+    });
+
+    // Display backend messages
+    socket.on('message-from-backend', function(message) {
+        var logDiv = document.createElement('div');
+        logDiv.innerHTML = message;
+        document.body.appendChild(logDiv);
+    });
+</script>
+
+</body>
+</html>
