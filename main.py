@@ -14,10 +14,7 @@ def real_time_speech_recognition():
             while True:
                 recognizer.adjust_for_ambient_noise(source)
                 audio = recognizer.listen(source, timeout=5)
-                
-                # Используем локальный движок PocketSphinx
-                text = recognizer.recognize_sphinx(audio, language="ru-RU")
-                
+                text = recognizer.recognize_google(audio, language="ru-RU")
                 print("Распознано:", text)
                 find_keyword(text)
         except sr.UnknownValueError:
