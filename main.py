@@ -1,26 +1,15 @@
-import speech_recognition as sr
+from vosk import Model, KaldiRecognizer
+import pyaudio
 
-def find_keyword(text):
-    if "Человек" in text and "Жук" in text:
-        print("Я нашел!")
+model = Model(r"models/vosk-model-small-ru-0.22")
+recognizer = KaldiRecognizer(model, 16000)
 
-def main():
-    recognizer = sr.Recognizer()
+mic = pyaudio.PyAudio()
+stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
+stream.start_stream()
 
-    with sr.Microphone() as source:
-        print("Говорите...")
-        recognizer.adjust_for_ambient_noise(source)
-
-        try:
-            while True:
-                audio = recognizer.listen(source)
-                text = recognizer.recognize_google(audio, language="ru-RU")
-                print("Распознано:", text)
-                find_keyword(text)
-        except sr.UnknownValueError:
-            print("Не удалось распознать речь")
-        except sr.RequestError as e:
-            print(f"Ошибка сервиса распознавания речи; {e}")
-
-if __name__ == "__main__":
-    main()
+while True:
+    data = stream.read(4096)
+    if recognizer.AcceptWaveform(data):
+        text = recognizer.Result()
+        print(f"' {text[14:-3]} '")
