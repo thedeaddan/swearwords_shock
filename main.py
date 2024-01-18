@@ -2,58 +2,49 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 import speech_recognition as sr
 import threading
-import io
+import modules.find as find
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 recognizer = sr.Recognizer()
+stop_listening_flag = False
 
-OBSERVE_TEXT_FILE = 'modules/find/some_text.txt'
-LANGUAGE = "ru-RU"
-PHRASE_TIME_LIMIT = 3
-
-stop_listening_event = threading.Event()
-
-def is_obscene(text):
-    with io.open(OBSERVE_TEXT_FILE, encoding='utf-8') as file:
-        for line in file:
-            if any(word.lower() in line for word in text.split()):
-                return True
-    return False
-
-def calibrate_microphone(source):
-    recognizer.adjust_for_ambient_noise(source)
-
-def listen_and_recognize(source):
-    try:
-        socketio.emit('message-from-backend', "Калибровка..")
-        calibrate_microphone(source)
-        
-        while not stop_listening_event.is_set():
-            socketio.emit('message-from-backend', "Говорите...")
-            audio = recognizer.listen(source, phrase_time_limit=PHRASE_TIME_LIMIT)
-            text = recognizer.recognize_google(audio, language=LANGUAGE)
-            
-            socketio.emit('message-from-backend', f"Распознано: {text}")
-            if is_obscene(text):
-                socketio.emit('obscene-detected')
-
-    except sr.UnknownValueError:
-        socketio.emit('message-from-backend', "Не удалось распознать речь")
-    except sr.RequestError as e:
-        print(f"Ошибка сервиса распознавания речи: {e}")
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @socketio.on('stop-listening')
 def stop_listening():
-    stop_listening_event.set()
+    global stop_listening_flag
+    stop_listening_flag = True
 
 @socketio.on('start-listening')
 def start_listening():
-    stop_listening_event.clear()
+    global stop_listening_flag
+    stop_listening_flag = False
 
-    with sr.Microphone() as source:
-        thread = threading.Thread(target=listen_and_recognize, args=(source,))
-        thread.start()
+    def background_thread():
+        global stop_listening_flag
+        with sr.Microphone() as source:
+            while not stop_listening_flag:
+                print(stop_listening_flag)
+                try:
+                    socketio.emit('message-from-backend', "Калибровка..")
+                    recognizer.adjust_for_ambient_noise(source)
+                    socketio.emit('message-from-backend',"Говорите...")
+                    audio = recognizer.listen(source,phrase_time_limit=3)
+                    text = recognizer.recognize_google(audio, language="ru-RU")
+                    socketio.emit('message-from-backend',f"Распознано:{text}")
+                    if find.is_obsence(text):
+                        socketio.emit('obscene-detected')
+                except sr.UnknownValueError:
+                    socketio.emit('message-from-backend',"Не удалось распознать речь")
+                except sr.RequestError as e:
+                    print(f"Ошибка сервиса распознавания речи; {e}")
+
+
+    thread = threading.Thread(target=background_thread)
+    thread.start()
 
 if __name__ == "__main__":
     socketio.run(app, debug=True, port=3333, host="0.0.0.0")

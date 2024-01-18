@@ -1,8 +1,10 @@
 import io
+from config import OBSERVE_TEXT_FILE
 
-def is_obsence(text: str) :
+
+def is_obsence(text: str):
     is_obsence_word = False
-    with io.open('modules/find/some_text.txt', encoding='utf-8') as file:
+    with io.open(OBSERVE_TEXT_FILE, encoding='utf-8') as file:
         for line in file:
             for word in text.split(" "):
                 if word.lower() in line:
