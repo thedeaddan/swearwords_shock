@@ -10,6 +10,7 @@ def check_text(text):
     found_profanities = set()
 
     for word in text.split():
+        word = word.replace("ё","е")
         parsed_word = morph.parse(word)[0]
         print(parsed_word)
         normal_form = parsed_word.normal_form
