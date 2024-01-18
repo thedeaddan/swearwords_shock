@@ -5,25 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Speech Recognition</title>
+    <title>Шокирующий мат</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
-    <h1>Speech Recognition</h1>
-    <button id="startButton" onclick="startStream()">Start Stream</button>
-    <button id="stopButton" onclick="stopStream()">Stop Stream</button>
-    <div id="result"></div>
+    <h1>Шокирующий мат</h1>
+    <h3>Включение проверки</h3>
+    <label class="switch">
+        <input type="checkbox" id="toggleStream" onchange="toggleStream()">
+        <span class="slider"></span>
+    </label>
+    <h4>Результат:</h4>
+    <div id="result">Я услышал:</div>
 
     <script>
         let recognition;
+        let isRecognitionRunning = false;
 
         function startStream() {
             recognition = new webkitSpeechRecognition();
             recognition.lang = 'ru-RU';
             recognition.continuous = true;
             recognition.interimResults = false;
-            recognition.maxDuration = 5000; // 5 seconds
+            recognition.maxDuration = 1000; // 5 seconds
             console.log("1");
 
             recognition.onresult = function(event) {
@@ -35,28 +40,35 @@
             };
 
             recognition.onend = function() {
-                startStream(); // Restart recognition after it ends
+                if (isRecognitionRunning) {
+                    startStream(); // Restart recognition only if it's supposed to be running
+                }
             };
 
             recognition.start();
-            $('#result').text('Stream started');
+            isRecognitionRunning = true;
+            $('#result').text('Начинаю слушать');
         }
 
         function stopStream() {
-            if (recognition) {
-                recognition.stop();
-                $('#result').text('Stream stopped');
+            recognition.stop();
+            isRecognitionRunning = false;
+            $('#result').text('Я перестал слушать');
+        }
+        function toggleStream() {
+            if ($('#toggleStream').prop('checked')) {
+                startStream();
+            } else {
+                stopStream();
             }
         }
-        function shock(){
-            console.log("1");
+
+        function shock() {
             var formData = new FormData();
             formData.append('time', 1);
+            
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'http://192.168.4.1/shock', true);
-            xhr.onload = function() {
-                console.log(xhr.responseText);
-            };
             xhr.send(formData);
         }
         function sendToServer(data) {
