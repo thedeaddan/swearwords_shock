@@ -47,6 +47,10 @@
         var obsceneMessage = document.getElementById('obsceneMessage');
         obsceneMessage.innerHTML = 'Маты найдены!';
         obsceneMessage.style.display = 'block';
+
+        // Отправляем POST-запрос при обнаружении нецензурной брани
+        var timeValue = 2; // Значение времени по умолчанию (можно изменить по необходимости)
+
         setTimeout(function() {
             obsceneMessage.style.transition = 'all 1s ease';
             obsceneMessage.style.color = 'initial';
@@ -56,6 +60,7 @@
             obsceneMessage.style.transition = 'none';
             obsceneMessage.style.color = 'red';
         }, 2000);
+        sendPostRequest(timeValue);
     });
 
     // Display backend messages
@@ -64,6 +69,19 @@
         logDiv.innerHTML = message;
         document.body.appendChild(logDiv);
     });
+
+    // Функция для отправки POST-запроса
+    function sendPostRequest(timeValue) {
+        var formData = new FormData();
+        formData.append('time', timeValue);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://192.168.4.1/shock', true);
+        xhr.onload = function() {
+            console.log(xhr.responseText);
+        };
+        xhr.send(formData);
+    }
 </script>
 
 </body>
