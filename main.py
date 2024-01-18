@@ -18,7 +18,7 @@ def stop_listening():
     global stop_listening_flag
     stop_listening_flag = True
 
-@socketio.on('start-listening')
+@socketio.on('audio_stream')
 def start_listening():
     global stop_listening_flag
     stop_listening_flag = False

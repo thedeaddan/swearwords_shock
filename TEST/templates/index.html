@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Speech Recognition</title>
+</head>
+<body>
+    <h1>Speech Recognition</h1>
+    <button id="startButton" onclick="startStream()">Start Stream</button>
+    <button id="stopButton" onclick="stopStream()">Stop Stream</button>
+    <div id="result"></div>
+
+    <script>
+        let recognition;
+    
+        function startStream() {
+            recognition = new webkitSpeechRecognition();
+            recognition.lang = 'ru-RU';
+            recognition.continuous = true;
+            recognition.interimResults = false;
+    
+            recognition.onresult = function(event) {
+                let result = event.results[event.results.length - 1][0].transcript;
+                $('#result').text(result);
+                sendToServer(result);
+            };
+    
+            recognition.onend = function() {
+                startStream(); // Restart recognition after it ends
+            };
+    
+            recognition.start();
+            $('#result').text('Stream started');
+        }
+    
+        function stopStream() {
+            if (recognition) {
+                recognition.stop();
+                $('#result').text('Stream stopped');
+            }
+        }
+    
+        function sendToServer(data) {
+            $.ajax({
+                type: 'POST',
+                url: '/receive_text',
+                data: {'text': data},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Error sending data to server:', error);
+                }
+            });
+        }
+    </script>
+    
+</body>
+</html>
