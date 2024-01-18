@@ -2,87 +2,90 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Speech Recognition</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            text-align: center;
-        }
-
-        button {
-            padding: 10px;
-            font-size: 16px;
-            margin: 5px;
-        }
-
-        #obsceneMessage {
-            display: none;
-            color: red;
-            font-size: 18px;
-            margin-top: 20px;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
+    <h1>Speech Recognition</h1>
+    <button id="startButton" onclick="startStream()">Start Stream</button>
+    <button id="stopButton" onclick="stopStream()">Stop Stream</button>
+    <div id="result"></div>
 
-<button id="startButton">Начать прослушивание</button>
-<button id="stopButton">Остановить прослушивание</button>
-<div id="obsceneMessage"></div>
+    <script>
+        let recognition;
 
-<script>
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+        function startStream() {
+            recognition = new webkitSpeechRecognition();
+            recognition.lang = 'ru-RU';
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.maxDuration = 5000; // 5 seconds
+            console.log("1");
 
-    document.getElementById('startButton').onclick = function() {
-        socket.emit('start-listening');
-    };
+            recognition.onresult = function(event) {
+                let result = event.results[event.results.length - 1][0].transcript;
+                console.log(result);
+                $('#result').text(result);
+                console.log("1111");
+                sendToServer(result);
+            };
 
-    document.getElementById('stopButton').onclick = function() {
-        socket.emit('stop-listening');
-    };
+            recognition.onend = function() {
+                startStream(); // Restart recognition after it ends
+            };
 
-    socket.on('obscene-detected', function() {
-        var obsceneMessage = document.getElementById('obsceneMessage');
-        obsceneMessage.innerHTML = 'Маты найдены!';
-        obsceneMessage.style.display = 'block';
+            recognition.start();
+            $('#result').text('Stream started');
+        }
 
-        // Отправляем POST-запрос при обнаружении нецензурной брани
-        var timeValue = 2; // Значение времени по умолчанию (можно изменить по необходимости)
+        function stopStream() {
+            if (recognition) {
+                recognition.stop();
+                $('#result').text('Stream stopped');
+            }
+        }
+        function shock(){
+            console.log("1");
+            var formData = new FormData();
+            formData.append('time', 1);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://192.168.4.1/shock', true);
+            xhr.onload = function() {
+                console.log(xhr.responseText);
+            };
+            xhr.send(formData);
+        }
+        function sendToServer(data) {
+            $.ajax({
+                type: 'POST',
+                url: '/receive_text',
+                data: {'text': data},
+                success: function(response) {
+                    handleResponse(response);
+                },
+                error: function(error) {
+                    console.error('Error sending data to server:', error);
+                }
+            });
+        }
 
-        setTimeout(function() {
-            obsceneMessage.style.transition = 'all 1s ease';
-            obsceneMessage.style.color = 'initial';
-        }, 100);
-        setTimeout(function() {
-            obsceneMessage.style.display = 'none';
-            obsceneMessage.style.transition = 'none';
-            obsceneMessage.style.color = 'red';
-        }, 2000);
-        sendPostRequest(timeValue);
-    });
-
-    // Display backend messages
-    socket.on('message-from-backend', function(message) {
-        var logDiv = document.createElement('div');
-        logDiv.innerHTML = message;
-        document.body.appendChild(logDiv);
-    });
-
-    // Функция для отправки POST-запроса
-    function sendPostRequest(timeValue) {
-        var formData = new FormData();
-        formData.append('time', timeValue);
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://192.168.4.1/shock', true);
-        xhr.onload = function() {
-            console.log(xhr.responseText);
-        };
-        xhr.send(formData);
-    }
-</script>
-
+        function handleResponse(response) {
+            if (response.status) {
+                shock();
+                $('#result').text('МАТ НАЙДЕН!');
+                $('body').addClass('found-animation');
+                setTimeout(function() {
+                    $('body').removeClass('found-animation');
+                    $('#result').text('');
+                }, 3000);
+            } else {
+                $('#result').text(response.text);
+            }
+        }
+    </script>
 </body>
 </html>
