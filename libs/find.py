@@ -11,9 +11,11 @@ def check_text(text):
 
     for word in text.split():
         parsed_word = morph.parse(word)[0]
+        print(parsed_word)
         normal_form = parsed_word.normal_form
-
-        if normal_form in profanity_list():
+        bad_words_list = profanity_list()
+        print(bad_words_list)
+        if normal_form in bad_words_list or word in bad_words_list:
             found_profanities.add(normal_form)
 
     return found_profanities
