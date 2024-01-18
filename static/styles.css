@@ -85,4 +85,3 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Дополнительные стили по вашему усмотрению */

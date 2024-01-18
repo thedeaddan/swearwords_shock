@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
+
 <body>
     <h1>Шокирующий мат</h1>
     <h3>Включение проверки</h3>
@@ -16,8 +17,8 @@
         <input type="checkbox" id="toggleStream" onchange="toggleStream()">
         <span class="slider"></span>
     </label>
-    <h4>Результат:</h4>
-    <div id="result">Я услышал:</div>
+    <h4>Я услышал:</h4>
+    <div id="result"></div>
 
     <script>
         let recognition;
@@ -29,13 +30,10 @@
             recognition.continuous = true;
             recognition.interimResults = false;
             recognition.maxDuration = 1000; // 5 seconds
-            console.log("1");
 
             recognition.onresult = function(event) {
                 let result = event.results[event.results.length - 1][0].transcript;
-                console.log(result);
                 $('#result').text(result);
-                console.log("1111");
                 sendToServer(result);
             };
 
@@ -47,13 +45,13 @@
 
             recognition.start();
             isRecognitionRunning = true;
-            $('#result').text('Начинаю слушать');
+            $('#result').text('Пока ничего, я вас слушаю..');
         }
 
         function stopStream() {
             recognition.stop();
             isRecognitionRunning = false;
-            $('#result').text('Я перестал слушать');
+            $('#result').text('Увы я вас больше не услышу..');
         }
         function toggleStream() {
             if ($('#toggleStream').prop('checked')) {
@@ -88,7 +86,7 @@
         function handleResponse(response) {
             if (response.status) {
                 shock();
-                $('#result').text('МАТ НАЙДЕН!');
+                $('#result').text('МАТ!');
                 $('body').addClass('found-animation');
                 setTimeout(function() {
                     $('body').removeClass('found-animation');
