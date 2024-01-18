@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify,redirect
 from libs.find import check_text
-from config import PORT,HOST,context
+from config import PORT,HOST
 app = Flask(__name__)
 
 @app.route('/')

@@ -12,10 +12,8 @@ def check_text(text):
     for word in text.split():
         word = word.replace("ё","е")
         parsed_word = morph.parse(word)[0]
-        print(parsed_word)
         normal_form = parsed_word.normal_form
         bad_words_list = profanity_list()
-        print(bad_words_list)
         if normal_form in bad_words_list or word in bad_words_list:
             found_profanities.add(normal_form)
 
