@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,redirect
 from libs.find import check_text
 from config import PORT,HOST,context
 app = Flask(__name__)
@@ -16,7 +16,6 @@ def receive_text():
     else:
         return jsonify({'status': False}), 200
 
-
 if __name__ == '__main__':
     
-    app.run(debug=True,port=PORT,host=HOST,ssl_context=context)
+    app.run(debug=True,port=PORT,host=HOST)
