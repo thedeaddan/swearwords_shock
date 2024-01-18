@@ -18,5 +18,5 @@ def receive_text():
 
 
 if __name__ == '__main__':
-   
+    
     app.run(debug=True,port=PORT,host=HOST,ssl_context=context)
