@@ -18,5 +18,5 @@ def receive_text():
 
 
 if __name__ == '__main__':
-    context = ('local.crt', 'local.key')#certificate and key files
+    context = ('cert.pem', 'privkey.pem')#certificate and key files
     app.run(debug=True,port=4000,host="0.0.0.0",ssl_context=context)
