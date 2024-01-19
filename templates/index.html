@@ -14,9 +14,9 @@
     <div class="container_glav">
         <div class="circle"></div>
     <div class="container_center">
-        <input id="isConnection" placeholder="Проверка электрошокера" disabled>
-        <label class="switch">
-            <button id="toggleStream" onclick="toggleStream()">
+        <input id="isConnection" placeholder="Введите адрес шокера">
+        <label class="switch" id = "sw">
+            <button id="toggleStream" onclick="checkConnection()">
             <span class="button_micr"></span>
             </button>
         </label>
@@ -26,7 +26,7 @@
 <div class="hid hidden" id="hid">
     <label class="switch_checkbox">
         <input type="checkbox">
-        <span class="slider"></span>
+        <span class="slider" onclick="toggleStream()"></span>
     </label>
     <div class="container_input">
         <div id="result"></div>  
@@ -72,14 +72,57 @@
             startPause();
             $('#result').text('Увы я вас больше не услышу..');
         }
+        function checkConnection() {
+            var address = isConnection.value.trim();
+            
+            // Добавляем "http://" в адрес, если его нет
+            if (!address.startsWith('http://') && !address.startsWith('https://')) {
+                address = 'http://' + address;
+            }
+
+            var timeout = 3000;
+            isConnection.value = 'Пытаюсь подключиться к ' + address + '..';
+
+            // Создаем промис, который решится после выполнения запроса или по истечении таймаута
+            var timeoutPromise = new Promise(function(resolve, reject) {
+                setTimeout(function() {
+                reject(new Error('Время ожидания запроса превышено'));
+                }, timeout);
+            });
+
+            // Выполняем запрос
+            var fetchPromise = fetch(address, { method: 'GET',mode: 'no-cors'})
+                .then(function(response) {
+                if (response) {
+                    console.log(response);
+                    isConnection.value = 'Подключён к ' + address + '..';
+                    sw.classList.add("hidden");
+                    hid.classList.remove("hidden");
+                } else {
+                    isConnection.value = 'Ошибка подключения :(';
+                    hid.classList.add("hidden");
+                }
+                })
+                .catch(function(error) {
+                isConnection.value = 'Ошибка подключения';
+                hid.classList.add("hidden");
+                });
+
+            // Используем Promise.race для выполнения первого завершившегося промиса (либо запрос, либо таймаут)
+            Promise.race([fetchPromise, timeoutPromise])
+                .catch(function(error) {
+                console.error(error.message);
+                // Обработка ошибок таймаута или других ошибок
+                isConnection.value = 'Время ожидания запроса превышено';
+                hid.classList.add("hidden");
+                });
+            }
 
         function toggleStream() {
             if (isRecognitionRunning) {
                 stopStream();
-                    hid.classList.add("hidden");
             } else {
                 startStream();
-                    hid.classList.remove("hidden");
             }
         }
 
@@ -131,9 +174,11 @@
             if (response.status) {
                 shock();
                 $('#result').text('МАТ!');
+                $('body').append('<div class="background-blue"></div>');
                 $('body').addClass('found-animation');
                 setTimeout(function() {
                     $('body').removeClass('found-animation');
+                    $('.background-blue').remove();
                     $('#result').text('');
                 }, 3000);
             } else {
