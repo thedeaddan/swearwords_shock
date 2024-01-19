@@ -4,27 +4,43 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="../static/styles.css">
     <title>Шокирующий мат</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 
 <body>
-    <h1>Шокирующий мат</h1>
-    <h3>Включение проверки</h3>
-    <label class="switch">
-        <input type="checkbox" id="toggleStream" onchange="toggleStream()">
+    <div class="container_glav">
+        <div class="circle"></div>
+    <div class="container_center">
+        <input id="isConnection" placeholder="Проверка электрошокера" disabled>
+        <label class="switch">
+            <button id="toggleStream" onclick="toggleStream()">
+            <span class="button_micr"></span>
+            </button>
+        </label>
+    </div>
+</div>
+
+<div class="hid hidden" id="hid">
+    <label class="switch_checkbox">
+        <input type="checkbox">
         <span class="slider"></span>
     </label>
-    <h4>Я услышал:</h4>
-    <div id="result"></div>
+    <div class="container_input">
+        <div id="result"></div>  
+    </div>
+</div>
 
     <script>
         let recognition;
         let isRecognitionRunning = false;
 
+        let isRunning = false;
+
         function startStream() {
+            if (!isRecognitionRunning) {
             recognition = new webkitSpeechRecognition();
             recognition.lang = 'ru-RU';
             recognition.continuous = true;
@@ -46,18 +62,37 @@
             recognition.start();
             isRecognitionRunning = true;
             $('#result').text('Пока ничего, я вас слушаю..');
+            startPause();
+            }
         }
 
         function stopStream() {
             recognition.stop();
             isRecognitionRunning = false;
+            startPause();
             $('#result').text('Увы я вас больше не услышу..');
         }
+
         function toggleStream() {
-            if ($('#toggleStream').prop('checked')) {
-                startStream();
-            } else {
+            if (isRecognitionRunning) {
                 stopStream();
+                    hid.classList.add("hidden");
+            } else {
+                startStream();
+                    hid.classList.remove("hidden");
+            }
+        }
+
+        function startPause() {
+            const button = document.getElementById('toggleStream');
+            if (isRunning) {
+                button.style.backgroundImage = "url('../static/img/start.png')";
+                isRunning = false;
+                isConnection.placeholder = 'Проверка электрошокера';
+            } else {
+                button.style.backgroundImage = "url('../static/img/pause.png')";
+                isRunning = true;
+                isConnection.placeholder = 'Подключено';
             }
         }
 
