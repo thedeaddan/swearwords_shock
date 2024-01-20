@@ -12,6 +12,9 @@ RUN apt-get update \
         libpng-dev \
         libpq-dev \
         wireless-tools \
+        python3-dev \ 
+        dnsmasq \
+        hostapd\
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -27,10 +30,11 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 # Устанавливаем Flask и другие зависимости через pip
 RUN pip install --upgrade pip \
-    && pip install pymorphy2 flask
+    && pip install pymorphy2 flask pyaccesspoint packaging
 
 # Открываем порт 5000
 EXPOSE 80
 
 # Команда для запуска файла main.py
-CMD ["python", "main.py"]
+CMD ["sh", "-c", "pyaccesspoint start && python main.py"]
+
