@@ -27,10 +27,10 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 # Устанавливаем Flask и другие зависимости через pip
 RUN pip install --upgrade pip \
-    && pip install Flask
+    && pip install pymorphy2 flask
 
 # Открываем порт 5000
-EXPOSE 5000
+EXPOSE 80
 
 # Команда для запуска файла main.py
 CMD ["python", "main.py"]
