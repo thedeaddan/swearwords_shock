@@ -79,8 +79,8 @@ button{
 } */
 
 input {
-    min-width: 300px;
-    min-height: 45px;
+    width: 300px;
+    height: 45px;
     border-radius: 40px;
     background-color: white;
 }
@@ -247,14 +247,14 @@ input:checked + .slider:before {
     transform: translateX(37px);
 }
 
-.hidden {
+/*.hidden {
     display: none !important;
 }
 
 .hidden.show {
     display: block;
 }
-
+*/
 .background-blue {
     position: fixed;
     top: 0;
@@ -265,3 +265,249 @@ input:checked + .slider:before {
     content: "";
     z-index: 9999;
 }
+
+@media screen and (max-width: 450px) {
+    #isConnection{
+        width: 250px;
+        height: 30px;
+        font-size: 20px;
+        text-align: center;
+    }
+    input {
+        width: 300px;
+        height: 30px;
+        border-radius: 40px;
+        background-color: white;
+    }
+    .circle {
+        width: 80px;
+        height: 80px;
+        background: #787878;
+        border-radius: 50%;
+        display: flex;
+        position: relative;
+        animation: breathe 2s infinite alternate; /* Применяем ключевые кадры */
+    }
+    #toggleStream {
+        display: inline-block;
+        margin-left: 20px;
+        outline: none; 
+        border: 0;
+        width: 40px;
+        height: 40px;
+        background-color: #333;
+        background-image: url('../static/img/start.png');
+        background-size: cover;     
+    }
+    .switch_checkbox {
+        margin-top: 20px;
+        position: relative;
+        display: inline-block;
+        width: 66px;
+        height: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        background-image: url(../static/img/thunder.png);
+        background-repeat: no-repeat;
+        background-size: cover; 
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(30px);
+        -ms-transform: translateX(30px);
+        transform: translateX(30px);
+    }
+    #result {
+        font-size: 13px;
+    }
+    .container_input {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 99%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #787878;
+        border-radius: 10px;
+        border: 2px solid #a0a0a0;
+        height: 140px;
+    }
+    input::placeholder {
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 600px) and (min-width: 451px) {
+    #isConnection{
+        width: 400px;
+        height: 35px;
+        font-size: 20px;
+        text-align: center;
+    }
+    input {
+        width: 300px;
+        height: 30px;
+        border-radius: 40px;
+        background-color: white;
+    }
+    .circle {
+        width: 100px;
+        height: 100px;
+        background: #787878;
+        border-radius: 50%;
+        display: flex;
+        position: relative;
+        animation: breathe 2s infinite alternate; /* Применяем ключевые кадры */
+    }
+    #toggleStream {
+        display: inline-block;
+        margin-left: 20px;
+        outline: none; 
+        border: 0;
+        width: 40px;
+        height: 40px;
+        background-color: #333;
+        background-image: url('../static/img/start.png');
+        background-size: cover;     
+    }
+    .switch_checkbox {
+        margin-top: 20px;
+        position: relative;
+        display: inline-block;
+        width: 66px;
+        height: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        background-image: url(../static/img/thunder.png);
+        background-repeat: no-repeat;
+        background-size: cover; 
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(30px);
+        -ms-transform: translateX(30px);
+        transform: translateX(30px);
+    }
+    #result {
+        font-size: 20px;
+    }
+    .container_input {
+        position: fixed;
+        bottom: 0;
+        width: 97%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #787878;
+        border-radius: 10px;
+        border: 2px solid #a0a0a0;
+        height: 200px;
+    }
+    input::placeholder {
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 900px) and (min-width: 601px) {
+    #isConnection{
+        width: 500px;
+        height: 40px;
+        font-size: 20px;
+        text-align: center;
+    }
+    input {
+        width: 300px;
+        height: 30px;
+        border-radius: 40px;
+        background-color: white;
+    }
+    .circle {
+        width: 100px;
+        height: 100px;
+        background: #787878;
+        border-radius: 50%;
+        display: flex;
+        position: relative;
+        animation: breathe 2s infinite alternate; /* Применяем ключевые кадры */
+    }
+    #toggleStream {
+        display: inline-block;
+        margin-left: 20px;
+        outline: none; 
+        border: 0;
+        width: 40px;
+        height: 40px;
+        background-color: #333;
+        background-image: url('../static/img/start.png');
+        background-size: cover;     
+    }
+    .switch_checkbox {
+        margin-top: 20px;
+        position: relative;
+        display: inline-block;
+        width: 66px;
+        height: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        background-image: url(../static/img/thunder.png);
+        background-repeat: no-repeat;
+        background-size: cover; 
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(30px);
+        -ms-transform: translateX(30px);
+        transform: translateX(30px);
+    }
+    #result {
+        font-size: 22px;
+    }
+    .container_input {
+        position: fixed;
+        bottom: 0;
+        width: 97%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #787878;
+        border-radius: 10px;
+        border: 2px solid #a0a0a0;
+        height: 200px;
+    }
+    input::placeholder {
+        font-size: 20px;
+    }
+}
+
+
