@@ -157,6 +157,7 @@ input::placeholder {
     height: 150px;
     background: #787878;
     border-radius: 50%;
+    display: flex;
     position: relative;
     animation: breathe 2s infinite alternate; /* Применяем ключевые кадры */
 }
@@ -176,8 +177,8 @@ input::placeholder {
 
 .microphone-icon {
     align-items: center;
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 75%;
+    max-height: 100%;
 }
 
 .container_glav {
