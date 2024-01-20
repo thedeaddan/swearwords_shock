@@ -12,13 +12,15 @@
 
 <body>
     <div class="container_glav">
-        <div class="circle"></div>
+        <div class="circle">
+            <div class="microphone-icon-container">
+                <img src="../static/img/micro_off.png" alt="Микрофон" class="microphone-icon" id="microphoneImage">
+            </div>
+        </div>
     <div class="container_center">
         <input id="isConnection" placeholder="Введите адрес шокера">
         <label class="switch" id = "sw">
-            <button id="toggleStream" onclick="checkConnection()">
-            <span class="button_micr"></span>
-            </button>
+            <button id="toggleStream" onclick="checkConnection()"></button>
         </label>
     </div>
 </div>
@@ -95,6 +97,7 @@
                 .then(function(response) {
                 if (response) {
                     console.log(response);
+                    $('.circle').addClass('active');
                     isConnection.value = 'Подключён к ' + address + '..';
                     sw.classList.add("hidden");
                     hid.classList.remove("hidden");
@@ -104,8 +107,8 @@
                 }
                 })
                 .catch(function(error) {
-                isConnection.value = 'Ошибка подключения';
-                hid.classList.add("hidden");
+                    isConnection.value = 'Ошибка подключения';
+                    hid.classList.add("hidden");
                 });
 
             // Используем Promise.race для выполнения первого завершившегося промиса (либо запрос, либо таймаут)
@@ -119,9 +122,16 @@
             }
 
         function toggleStream() {
+            var microphoneImage = document.getElementById("microphoneImage");
             if (isRecognitionRunning) {
                 stopStream();
+                $('.circle').removeClass('listen');
+                $('.circle').addClass('active');
+                microphoneImage.src = "../static/img/micro_off.png";
             } else {
+                microphoneImage.src = "../static/img/micro.png";
+                $('.circle').removeClass('active');
+                $('.circle').addClass('listen');
                 startStream();
             }
         }
@@ -131,7 +141,7 @@
             if (isRunning) {
                 button.style.backgroundImage = "url('../static/img/start.png')";
                 isRunning = false;
-                isConnection.placeholder = 'Проверка электрошокера';
+                isConnection.placeholder = 'Введите адрес шокера..';
             } else {
                 button.style.backgroundImage = "url('../static/img/pause.png')";
                 isRunning = true;
@@ -174,13 +184,23 @@
             if (response.status) {
                 shock();
                 $('#result').text('МАТ!');
-                $('body').append('<div class="background-blue"></div>');
-                $('body').addClass('found-animation');
+                
+                // Добавляем классы анимации для тряски
+                $('.container_glav').addClass('animate__animated animate__shakeX');
+
+                // Создаем элемент для наложения цвета
+                var colorOverlay = $('<div class="color-overlay"></div>');
+                $('body').append(colorOverlay);
+
+                // Добавляем класс анимации для изменения цвета фона
+                colorOverlay.addClass('animate__animated animate__flash');
+
                 setTimeout(function() {
-                    $('body').removeClass('found-animation');
-                    $('.background-blue').remove();
+                    // Удаляем элемент и классы анимации
+                    colorOverlay.remove();
+                    $('.container_glav').removeClass('animate__animated animate__shakeX');
                     $('#result').text('');
-                }, 3000);
+                }, 1000);
             } else {
                 $('#result').text(response.text);
             }
